@@ -32,10 +32,20 @@ header {
   color: white;
   padding: 1rem 2rem;
   min-height: 30vh;
+}
+
+header.green {
   background: -webkit-gradient(linear, left top, right bottom, from(#7ed56f), to(#28b485));
   background: -webkit-linear-gradient(left top, #7ed56f, #28b485);
   background: -o-linear-gradient(left top, #7ed56f, #28b485);
   background: linear-gradient(to right bottom, #7ed56f, #28b485);
+}
+
+header.red {
+  background: -webkit-gradient(linear, left top, right bottom, from(#d56f6f), to(#b42828f5));
+  background: -webkit-linear-gradient(left top, #d56f6f, #b42828f5);
+  background: -o-linear-gradient(left top, #d56f6f, #b42828f5);
+  background: linear-gradient(to right bottom, #d56f6f, #b42828f5);
 }
 
 header .budgetAppLogo {
@@ -164,7 +174,7 @@ header .budgetAppLogo h1 {
 
 .income-expense .income__amount {
   font-size: 3rem;
-  color: #7ed56f;
+  color: #10be67;
   font-weight: bolder;
 }
 
@@ -299,10 +309,10 @@ header .budgetAppLogo h1 {
 .collection {
   padding: 10px;
   max-width: 1000px;
-  margin: 2.5vw auto;
-  -webkit-box-shadow: 2px 5px 15px #d9d9d9, -2px -5px 15px #ffffff;
-          box-shadow: 2px 5px 15px #d9d9d9, -2px -5px 15px #ffffff;
-  border-radius: 10px;
+  margin: 2vw auto;
+  -webkit-box-shadow: 2px 4px 15px #d9d9d9, -2px -4px 15px #ffffff;
+          box-shadow: 2px 4px 15px #d9d9d9, -2px -4px 15px #ffffff;
+  border-radius: 13px;
 }
 
 .item {

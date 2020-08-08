@@ -31,7 +31,13 @@ header {
   color: white;
   padding: 1rem 2rem;
   min-height: 30vh;
-  background: linear-gradient(to right bottom, #7ed56f, #28b485);
+  &.green {
+    background: linear-gradient(to right bottom, #7ed56f, #28b485);
+  }
+
+  &.red {
+    background: linear-gradient(to right bottom, #d56f6f, #b42828f5);
+  }
   .budgetAppLogo {
     display: flex;
 
@@ -116,7 +122,7 @@ header {
 
   .income__amount {
     font-size: 3rem;
-    color: #7ed56f;
+    color: #10be67;
     font-weight: bolder;
     p {
     }
@@ -229,9 +235,9 @@ header {
 .collection {
   padding: 10px;
   max-width: 1000px;
-  margin: 2.5vw auto;
-  box-shadow: 2px 5px 15px #d9d9d9, -2px -5px 15px #ffffff;
-  border-radius: 10px;
+  margin: 2vw auto;
+  box-shadow: 2px 4px 15px #d9d9d9, -2px -4px 15px #ffffff;
+  border-radius: 13px;
 }
 
 .item {
