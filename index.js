@@ -1,169 +1,158 @@
-console.log('ready');
-let items = localStorage.getItem('items');
-let inc = localStorage.getItem('inc');
-let exp = localStorage.getItem('exp');
-let total = localStorage.getItem('total');
-let Total = localStorage.getItem('Total')
+document.querySelector('#ewallet-form').addEventListener('submit', (e) => {
+  e.preventDefault();
 
-if (Total) {
-  Total = parseInt(Total)
-  console.log(Total)
-} else {
-  localStorage.setItem('Total', 0)
-  Total = 0
-}
-
-if (items) {
-  items = JSON.parse(items);
-  for (let i = 0; i < items.length; i++) {
-    $('.collection').append(items[i]);
+  const type = document.querySelector('.add__type').value;
+  const desc = document.querySelector('.add__description').value;
+  const value = document.querySelector('.add__value').value;
+  if (desc && value) {
+    addItems(type, desc, value);
+    resetForm();
   }
-} else {
-  let arr = [];
-  arr = JSON.stringify(arr);
-  localStorage.setItem('items', arr);
-}
-
-if (inc) {
-  $('#inc_amount').html(`$${parseInt(inc).toLocaleString()}`);
-} else {
-  localStorage.setItem('inc', '0');
-}
-
-if (exp) {
-  $('#exp_amount').html(`$${parseInt(exp).toLocaleString()}`);
-} else {
-  localStorage.setItem('exp', '0');
-}
-
-if (total) {
-  console.log('--total', total)
-  if (parseInt(total) < 0) {
-    $('#header').attr('class', 'red')
-    $('#total_amount').html(`-$${Math.abs(parseInt(total)).toLocaleString()}`);
-  } else {
-    $('#total_amount').html(`$${parseInt(total).toLocaleString()}`);
-  }
-} else {
-  localStorage.setItem('total', '0');
-}
-
-$('ion-icon').click((e) => {
-  const action = $('.add__type').val();
-  const description = $('.add__description').val();
-  const value = $('.add__value').val();
-  let type = '';
-  let sign = '';
-  let total = unLocale($('#total_amount').html().substr(1));
-  console.log(total);
-  if (action == 'inc') {
-    type = 'income';
-    sign = '+';
-    let newVal =
-      unLocale($('#inc_amount').html().substr(1)) + parseInt(value);
-    let newTotal = newVal - unLocale($('#exp_amount').html().substr(1))
-    localStorage.setItem('Total', newTotal)
-    console.log('total ', localStorage.getItem('Total'))
-    $('#inc_amount').html('$' + newVal.toLocaleString());
-    $('#total_amount').html('$' + newTotal.toLocaleString());
-
-    if (newTotal < 0) {
-      newTotal = Math.abs(newTotal)
-      $('#total_amount').html('-$' + newTotal.toLocaleString());
-      $('#header').attr('class', 'red')
-    } else {
-      console.log('green')
-      $('#total_amount').html('$' + newTotal.toLocaleString());
-      $('#header').attr('class', 'green')
-    }
-
-    localStorage.setItem('inc', newVal);
-    localStorage.setItem('total', newTotal);
-    console.log('saved total ', localStorage.getItem('total'))
-  } else {
-    type = 'expense';
-    sign = '-';
-    const newVal = Math.abs(
-      unLocale($('#exp_amount').html().substr(1)) + parseInt(value)
-    );
-    let newTotal = unLocale($('#inc_amount').html().substr(1)) - newVal
-    localStorage.setItem('Total', newTotal)
-    localStorage.setItem('total', newTotal);
-
-    console.log('total ', localStorage.getItem('Total'))
-
-    if (newTotal < 0) {
-      newTotal = Math.abs(newTotal)
-      $('#total_amount').html('-$' + newTotal.toLocaleString());
-      $('#header').attr('class', 'red')
-    } else {
-      console.log('green')
-      $('#total_amount').html('$' + newTotal.toLocaleString());
-      $('#header').attr('class', 'green')
-    }
-    $('#exp_amount').html('$' + newVal.toLocaleString());
-
-    localStorage.setItem('exp', newVal);
-
-    console.log('saved total ', localStorage.getItem('total'))
-  }
-
-  const date = getTime();
-
-  const newItem = `<div class="item">
-  <div class="item-description-time">
-    <div class="item-description">
-      <p>${description}</p>
-    </div>
-    <div class="item-time">
-      <p>${date}</p>
-    </div>
-  </div>
-  <div class="item-amount ${type}-amount">
-    <p>${sign}$${parseInt(value).toLocaleString()}</p>
-  </div>
-</div>`;
-
-  $('.collection').prepend(newItem);
-  let arr = localStorage.getItem('items');
-  arr = JSON.parse(arr);
-  arr.push(newItem);
-  arr = JSON.stringify(arr);
-  localStorage.setItem('items', arr);
-
-  $('.add__type').val('inc')
-  $('.add__description').val('')
-  $('.add__value').val('')
 });
 
-const unLocale = data => {
-  return parseInt(data.replace(/[^0-9-.]/g, ''))
+//  ****************************************************************
+//  *** UI *********************************************************
+//  ****************************************************************
+
+showItems();
+
+function showItems() {
+  let items = getItemsFromLS();
+  const collection = document.querySelector('.collection');
+
+  for (let item of items) {
+    newHtml = `
+    <div class="item">
+      <div class="item-description-time">
+        <div class="item-description">
+          <p>${item.desc}</p>
+        </div>
+        <div class="item-time">
+          <p>${item.time}</p>
+        </div>
+      </div>
+      <div class="item-amount ${
+        item.type === '+' ? 'income-amount' : 'expense-amount'
+      }">
+        <p>${item.type}$${sep(item.value)}</p>
+      </div>
+    </div>
+  `;
+    collection.insertAdjacentHTML('afterbegin', newHtml);
+  }
 }
 
-const getTime = () => {
-  let date = new Date();
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  var strTime = hours + ':' + minutes + ' ' + ampm;
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  let day = date.getDate();
-  let month = months[date.getMonth()];
-  return month + ' ' + day + ', ' + strTime;
-};
+function addItems(type, desc, value) {
+  let time = getFormattedTime();
+  let newHtml = `
+    <div class="item">
+      <div class="item-description-time">
+        <div class="item-description">
+          <p>${desc}</p>
+        </div>
+        <div class="item-time">
+          <p>${time}</p>
+        </div>
+      </div>
+      <div class="item-amount ${
+        type === '+' ? 'income-amount' : 'expense-amount'
+      }">
+        <p>${type}$${sep(value)}</p>
+      </div>
+    </div>
+  `;
+
+  addItemsToLS(type, desc, value, time);
+
+  const collection = document.querySelector('.collection');
+  collection.insertAdjacentHTML('afterbegin', newHtml);
+}
+
+function resetForm() {
+  document.querySelector('.add__type').value = '+';
+  document.querySelector('.add__description').value = '';
+  document.querySelector('.add__value').value = '';
+}
+
+//  ****************************************************************
+//  *** Local Storage *****************************************
+//  ****************************************************************
+
+function getItemsFromLS() {
+  let items = localStorage.getItem('items');
+  return items ? JSON.parse(items) : [];
+}
+
+function addItemsToLS(type, desc, value, time) {
+  const item = { type, desc, value, time };
+
+  let items = getItemsFromLS();
+  items.push(item);
+  localStorage.setItem('items', JSON.stringify(items));
+
+  getTotalIncome();
+  getTotalExpense();
+  getTotalBalance();
+}
+
+//  ****************************************************************
+//  *** Total Calculations *****************************************
+//  ****************************************************************
+
+getTotalIncome();
+
+function getTotalIncome() {
+  let items = getItemsFromLS();
+  const amount = items
+    .filter((item) => item.type === '+')
+    .reduce((sum, inc) => sum + parseInt(inc.value), 0);
+  document.querySelector('.income__amount p').innerText = `$${sep(amount)}`;
+}
+
+getTotalExpense();
+
+function getTotalExpense() {
+  let items = getItemsFromLS();
+  const amount = items
+    .filter((item) => item.type === '-')
+    .reduce((sum, inc) => sum + parseInt(inc.value), 0);
+  document.querySelector('.expense__amount p').innerText = `$${sep(amount)}`;
+}
+
+getTotalBalance();
+
+function getTotalBalance() {
+  let items = getItemsFromLS();
+  const amount = items.reduce((sum, inc) => {
+    if (inc.type === '+') {
+      return sum + parseInt(inc.value);
+    } else {
+      return sum - parseInt(inc.value);
+    }
+  }, 0);
+
+  document.querySelector('.balance__amount p').innerText = `${sep(amount)}`;
+  document.querySelector('header').className = amount >= 0 ? 'green' : 'red';
+}
+
+//  ****************************************************************
+//  *** Utility Functions *****************************************
+//  ****************************************************************
+
+function getFormattedTime() {
+  const now = new Date().toLocaleTimeString('en-us', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const date = now.split(',')[0].split(' ')[1];
+  const month = now.split(',')[0].split(' ')[0];
+  const time = now.split(',')[1];
+  return `${date} ${month},${time}`;
+}
+
+function sep(number) {
+  number = parseInt(number);
+  return number.toLocaleString();
+}
